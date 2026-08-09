@@ -229,7 +229,7 @@ function App() {
             <div className="card harm-card" id="armonia">
               <div className="harm-head">
                 <div>
-                  <h2>Armonización</h2>
+                  <h2>Armonización <span className="harm-subtle">({showTetrads ? 'Tétradas' : 'Triadas'})</span></h2>
                   <div className="harm-sub">Triadas y tétradas construidas desde la escala seleccionada.</div>
                 </div>
                 <div className="mini-tabs">

@@ -9,7 +9,7 @@ type FretboardProps = {
   labelMode: 'notes' | 'degrees' | 'both';
 };
 
-const MARKER_FRETS = [3, 5, 7, 9, 12];
+const MARKER_FRETS = [3, 5, 8, 10, 12];
 
 export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
   const [selected, setSelected] = useState<FretboardCell | null>(null);
@@ -20,67 +20,47 @@ export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
   return (
     <div className="fretboard-card">
       <div className="fretboard-frame">
-        <div className="fretboard-titles">
-          <div className="fretboard-gap" />
-          {Array.from({ length: frets }, (_, fret) => (
-            <div key={fret} className={fret === 0 ? 'fret-number nut-number' : 'fret-number'}>
-              {fret}
-            </div>
-          ))}
-        </div>
-
-        <div className="fretboard-neck">
+        <div className="fretboard">
           {strings.map((stringRow, stringIndex) => (
             <div key={stringIndex} className="string-row">
-              <div className="string-name">{stringRow[0].stringName}</div>
-              {stringRow.map((cell) => {
+              {stringRow.slice(1, 13).map((cell) => {
                 const statusClass = cell.isRoot
-                  ? 'note-root'
+                  ? 'root'
                   : cell.isCharacteristic
-                  ? 'note-characteristic'
+                  ? 'char'
                   : cell.inScale
-                  ? 'note-scale'
-                  : 'note-out';
+                  ? 'scale'
+                  : '';
 
                 const showNote = labelMode !== 'degrees';
                 const showDegree = labelMode !== 'notes';
+                const noteText = cell.note.replace('#', '♯');
 
                 return (
                   <button
                     key={cell.fret}
                     type="button"
-                    className={`fret-cell ${statusClass}`}
+                    className="fret-cell"
                     onClick={() => setSelected(cell)}
                     aria-label={`${cell.note} ${cell.degree ?? 'Posición fuera de escala'}`}
                   >
-                    <span className="note-dot">
-                      <span className="note-label note-name">{showNote ? cell.note : ''}</span>
-                      {showDegree ? <span className="note-label note-degree">{cell.degree ?? ''}</span> : null}
-                    </span>
+                    <div className={`marker ${statusClass}`}>
+                      {showNote && <span className="marker-note">{noteText}</span>}
+                      {showDegree && cell.degree ? <span className="marker-degree">{cell.degree}</span> : null}
+                    </div>
                   </button>
                 );
               })}
             </div>
           ))}
+        </div>
 
-          <div className="fret-markers">
-            <div className="fretboard-gap" />
-            {Array.from({ length: frets }, (_, fret) => {
-              const isMarker = MARKER_FRETS.includes(fret);
-              return (
-                <div key={fret} className="marker-cell">
-                  {fret === 12 ? (
-                    <>
-                      <span className="marker-dot" />
-                      <span className="marker-dot" />
-                    </>
-                  ) : isMarker ? (
-                    <span className="marker-dot" />
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
+        <div className="fret-numbers">
+          {Array.from({ length: 12 }, (_, index) => (
+            <span key={index} className={MARKER_FRETS.includes(index + 1) ? 'dot' : ''}>
+              {index + 1}
+            </span>
+          ))}
         </div>
       </div>
 

@@ -1,5 +1,4 @@
 import { type ChordRecord } from '../music/chords';
-import { Music2 } from 'lucide-react';
 
 type HarmonyTableProps = {
   harmony: ChordRecord[];
@@ -9,31 +8,38 @@ type HarmonyTableProps = {
   onSelectChord?: (label: string) => void;
 };
 
+function getChordColor(degreeName: string, quality: string) {
+  if (degreeName === 'iii°') return 'orange';
+  if (degreeName === 'I' || degreeName === 'IV' || degreeName === '♭VII') return 'purple';
+  if (degreeName === 'ii') return 'blue';
+  if (degreeName === 'v' || degreeName === 'vi') return 'cyan';
+  return quality === 'disminuido' ? 'orange' : 'purple';
+}
+
+function getQualityLabel(quality: string) {
+  if (quality === 'mayor') return 'Mayor';
+  if (quality === 'menor') return 'Menor';
+  if (quality === 'disminuido') return 'Disminuido';
+  return quality;
+}
+
 export function HarmonyTable({ harmony, root, scaleKey, selectedChordLabel, onSelectChord }: HarmonyTableProps) {
   return (
-    <div className="harmony-grid">
+    <div className="chords">
       {harmony.map((chord) => {
         const isActive = chord.label === selectedChordLabel;
+        const colorClass = getChordColor(chord.degreeName, chord.quality);
+
         return (
           <button
             key={chord.label}
             type="button"
-            className={`harmony-card ${isActive ? 'active' : ''}`}
+            className={`chord ${colorClass} ${isActive ? 'active' : ''}`}
             onClick={() => onSelectChord?.(chord.label)}
           >
-            <div className="harmony-card-title">
-              <div>
-                <strong>{chord.label}</strong>
-                <span>{chord.degreeName}</span>
-              </div>
-              <Music2 size={16} />
-            </div>
-            <div className="harmony-card-body">
-              <p className="harmony-notes">{chord.notes.join(' ')}</p>
-              <p className="harmony-degrees">{chord.degrees.join(' ')}</p>
-            </div>
-            <p className="harmony-intervals">{chord.intervals.join(' · ')}</p>
-            <p className="harmony-subtitle">Grado de {root} {scaleKey}</p>
+            <div className="name">{chord.label}</div>
+            <div className="roman">{chord.degreeName}</div>
+            <div className="quality">{getQualityLabel(chord.quality)}</div>
           </button>
         );
       })}
