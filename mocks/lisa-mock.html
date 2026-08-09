@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lisa — Mock UI</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg2:#0b1526;
+      --panel:#111b2c;
+      --panel2:#151f31;
+      --panel3:#1b263a;
+      --border:#29364b;
+      --muted:#9ca9bd;
+      --text:#f4f7fb;
+      --purple:#9f4cff;
+      --purple2:#7d35d8;
+      --blue:#3098e8;
+      --orange:#ff8c1a;
+      --cyan:#30c6e8;
+      --green:#3ac776;
+      --shadow:0 18px 60px rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg);color-scheme:dark}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 72% 10%, rgba(91,50,160,.11), transparent 30%),
+        linear-gradient(180deg,#08111f 0%,#07111f 100%);
+      min-height:100vh;
+    }
+    button,select{font:inherit;color:inherit}
+    button{cursor:pointer}
+    .app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+    .sidebar{
+      position:sticky;top:0;height:100vh;
+      padding:26px 14px 22px;
+      border-right:1px solid #243147;
+      background:linear-gradient(180deg,#091323 0%,#08111f 100%);
+      display:flex;flex-direction:column;gap:20px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:0 14px 12px}
+    .logo-note{font-size:42px;line-height:1;color:#a65cff;filter:drop-shadow(0 0 14px rgba(164,92,255,.28))}
+    .brand-title{font-weight:800;font-size:28px;line-height:1}
+    .brand-sub{font-size:15px;color:#b5bfd0;margin-top:5px}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav-item{
+      display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;
+      padding:12px 14px;border-radius:10px;color:#ecf1f8;text-decoration:none;border:1px solid transparent;
+    }
+    .nav-item.active{
+      background:linear-gradient(90deg,rgba(151,75,234,.24),rgba(151,75,234,.12));
+      border-color:#332b4d;position:relative;
+    }
+    .nav-item.active:before{
+      content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:#a44cff;
+    }
+    .nav-icon{font-size:22px;text-align:center;color:#d7ddea}
+    .nav-item.active .nav-icon,.nav-item.active .nav-title{color:#bb78ff}
+    .nav-title{font-size:16px;font-weight:600}
+    .nav-sub{font-size:12px;color:#9ca9bd;margin-top:3px}
+    .sidebar-bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-around;color:#bac4d3;font-size:18px;padding:8px 10px}
+    .main{padding:22px 28px 28px;overflow:hidden}
+    .shell{max-width:1240px;margin:0 auto}
+    h1{font-size:24px;margin:0 0 12px}
+    h2{font-size:22px;margin:0}
+    h3{font-size:17px;margin:0}
+    .card{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:linear-gradient(180deg,rgba(20,30,48,.98),rgba(17,27,44,.98));
+      box-shadow:var(--shadow);
+    }
+    .controls{
+      display:grid;grid-template-columns:1.05fr 1.05fr auto auto;gap:18px;align-items:end;
+      padding:18px 20px;margin-bottom:14px;
+    }
+    .field label{display:block;color:#c7d0dc;font-size:13px;margin-bottom:8px}
+    .select-wrap{position:relative}
+    select{
+      appearance:none;width:100%;
+      background:#121b2d;border:1px solid #344157;border-radius:9px;padding:11px 42px 11px 13px;
+      outline:none;
+    }
+    .select-wrap:after{content:"⌄";position:absolute;right:14px;top:8px;color:#d6deea;font-size:22px;pointer-events:none}
+    .btn{
+      min-height:44px;padding:0 16px;border-radius:9px;border:1px solid #334057;background:#121b2d;
+      display:flex;align-items:center;gap:8px;justify-content:center;white-space:nowrap;
+    }
+    .btn:hover{background:#18243a}
+    .scale-card{
+      display:grid;grid-template-columns:260px 1fr 315px;
+      gap:0;margin-bottom:14px;overflow:hidden;
+    }
+    .scale-block{padding:18px 20px}
+    .scale-block + .scale-block{border-left:1px solid var(--border)}
+    .scale-title{font-size:22px;font-weight:800;margin-bottom:6px}
+    .scale-desc{font-size:14px;color:#c3ccda}
+    .pill{display:inline-flex;margin-top:12px;padding:6px 10px;border-radius:7px;background:rgba(159,76,255,.12);color:#c78eff;font-size:13px}
+    .notes-line{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:center;text-align:center}
+    .note-big{font-weight:800;font-size:28px}
+    .degree{color:#bdc7d6;font-size:17px;margin-top:8px}
+    .char-note{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;border-radius:8px;background:rgba(159,76,255,.12);border:1px solid #584170;color:#b45cff}
+    .formula{border-top:1px solid #263246;margin-top:14px;padding-top:10px;color:#bfc9d7;font-size:14px}
+    .relation-title{font-size:13px;font-weight:700;margin-bottom:12px}
+    .relation-text{font-size:14px;line-height:1.45;color:#c9d2df}
+    .accent{color:#bd72ff}
+    .fret-card{padding:14px 16px 16px;margin-bottom:14px}
+    .fret-head{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:14px}
+    .fret-sub{font-size:14px;color:#aab5c7;margin-top:4px}
+    .segmented{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #39465b;border-radius:9px;overflow:hidden;min-width:370px}
+    .segmented button{
+      background:#131d2f;border:0;padding:9px 18px;color:#e7edf6;
+    }
+    .segmented button + button{border-left:1px solid #2a374b}
+    .segmented .active{background:linear-gradient(180deg,#9d4ff1,#853ecf);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .fret-wrap{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:stretch}
+    .string-labels{display:grid;grid-template-rows:repeat(6,1fr);padding:1px 0 22px}
+    .string-labels span{display:flex;align-items:center;justify-content:center;color:#c5cfdb}
+    .fret-scroll{overflow-x:auto;padding-bottom:2px}
+    .fretboard{
+      min-width:1000px;position:relative;
+      border-left:10px solid #d8dde3;
+      border-right:4px solid #bec5cd;
+      background:
+        repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 2px,transparent 2px 80px),
+        linear-gradient(90deg,#5f5148,#3f342f 45%,#5a4b42 100%);
+      box-shadow:inset 0 0 20px rgba(0,0,0,.35);
+    }
+    .string-row{
+      height:41px;display:grid;grid-template-columns:repeat(12,1fr);position:relative;
+      border-bottom:1px solid rgba(237,240,243,.8);
+    }
+    .string-row:last-child{border-bottom:0}
+    .string-row:after{
+      content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:#d4d7db;box-shadow:0 0 3px rgba(255,255,255,.35);
+      transform:translateY(-50%);
+    }
+    .fret-cell{position:relative;border-right:3px solid rgba(230,232,235,.75);display:flex;align-items:center;justify-content:center;z-index:1}
+    .marker{
+      width:34px;height:34px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:15px;border:1px solid rgba(255,255,255,.45);
+      box-shadow:0 2px 8px rgba(0,0,0,.45);
+      background:#13191c;
+      position:relative;z-index:4;
+    }
+    .marker.scale{background:linear-gradient(180deg,#347ec1,#1f5f99)}
+    .marker.root{background:linear-gradient(180deg,#ad52e5,#7930bb)}
+    .marker.char{background:linear-gradient(180deg,#9c4ed2,#6e2db6);box-shadow:0 0 0 2px rgba(154,75,223,.15),0 2px 8px rgba(0,0,0,.45)}
+    .fret-numbers{
+      min-width:1000px;display:grid;grid-template-columns:repeat(12,1fr);padding:8px 0 0 10px;color:#cbd4e0;font-size:13px;text-align:center;
+    }
+    .fret-numbers span{position:relative}
+    .fret-numbers .dot:before{content:"";width:9px;height:9px;border-radius:50%;background:#758091;position:absolute;left:50%;top:-3px;transform:translateX(-50%)}
+    .legend{display:flex;gap:28px;align-items:center;flex-wrap:wrap;padding:15px 16px 2px 48px;color:#c7d1df;font-size:13px}
+    .legend-item{display:flex;align-items:center;gap:8px}
+    .legend-dot{width:17px;height:17px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.25)}
+    .lg-root{background:linear-gradient(180deg,#bc77ef,#8b4ad1)}
+    .lg-char{background:#8b3bd0}.lg-scale{background:#2785c6}.lg-other{background:#181b1c}
+    .bottom-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+    .harm-card,.detail-card{padding:14px 16px}
+    .harm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .mini-tabs{display:flex;border:1px solid #303c50;border-radius:8px;overflow:hidden}
+    .mini-tabs button{border:0;background:#121b2c;padding:7px 18px}
+    .mini-tabs .active{background:linear-gradient(180deg,#9f4df1,#7f35c8)}
+    .chords{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+    .chord{
+      min-height:122px;border:1px solid #34435b;border-radius:9px;background:#172235;padding:10px 8px;text-align:center;
+      display:flex;flex-direction:column;justify-content:center;gap:6px;
+    }
+    .chord .name{font-size:26px;font-weight:800}
+    .chord .roman{font-size:14px}
+    .chord .quality{font-size:12px;color:#b9c4d4}
+    .chord.purple{background:linear-gradient(180deg,rgba(126,69,166,.18),rgba(42,33,66,.28))}
+    .chord.blue{background:linear-gradient(180deg,rgba(39,111,174,.10),rgba(20,46,72,.28))}
+    .chord.orange{border-color:#d57913;background:linear-gradient(180deg,rgba(147,81,16,.12),rgba(49,31,20,.22))}
+    .purple .name,.purple .roman,.purple .quality{color:#b96dfc}
+    .blue .name,.blue .roman{color:#63a5f4}
+    .cyan .name,.cyan .roman{color:#3dbedc}
+    .orange .name,.orange .roman,.orange .quality{color:#ff971f}
+    .detail-layout{display:grid;grid-template-columns:85px 1fr 140px;gap:18px;align-items:start}
+    .big-chord{font-size:38px;font-weight:900;color:#ff8e15;line-height:1}
+    .degree-label{font-size:13px;color:#c3ccda;margin-top:8px}
+    .details{font-size:14px;color:#d3dbe7;line-height:1.55}
+    .details .line{padding:7px 0;border-bottom:1px solid #273246}
+    .formula-row{display:flex;gap:14px}.formula-row b{color:#ff9a28}
+    .mini-diagram{height:140px;border:1px solid #778292;background:
+      repeating-linear-gradient(90deg,transparent 0 20px,#728096 21px 22px),
+      repeating-linear-gradient(180deg,transparent 0 24px,#728096 25px 26px),
+      #121a29;position:relative}
+    .mini-dot{position:absolute;width:16px;height:16px;border-radius:50%;background:#d87c15;border:2px solid #ffb247}
+    .mini-dot.d1{left:32px;top:48px}.mini-dot.d2{right:21px;top:48px}
+    .footer-space{height:4px}
+    @media (max-width:1050px){
+      .app{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .main{padding:18px}
+      .scale-card{grid-template-columns:1fr}
+      .scale-block + .scale-block{border-left:0;border-top:1px solid var(--border)}
+      .controls{grid-template-columns:1fr 1fr}
+      .bottom-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:680px){
+      .main{padding:12px}
+      .controls{grid-template-columns:1fr}
+      .fret-head{align-items:flex-start;flex-direction:column}
+      .segmented{min-width:0;width:100%}
+      .notes-line{gap:4px}
+      .note-big{font-size:22px}
+      .chords{grid-template-columns:repeat(2,1fr)}
+      .detail-layout{grid-template-columns:1fr}
+      .mini-diagram{max-width:180px}
+      .legend{padding-left:0;gap:14px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-note">♫</div>
+        <div>
+          <div class="brand-title">Lisa</div>
+          <div class="brand-sub">teoría musical</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item active" href="#"><div class="nav-icon">⌘</div><div><div class="nav-title">Explorar</div><div class="nav-sub">Escalas, modos y mástil</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">☆</div><div><div class="nav-title">Modos</div><div class="nav-sub">Comparador modal</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">♮</div><div><div class="nav-title">Armonía</div><div class="nav-sub">Armonización de la escala</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">♬</div><div><div class="nav-title">Acordes</div><div class="nav-sub">Constructor y consulta</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">◉</div><div><div class="nav-title">Intervalos</div><div class="nav-sub">Calculadora de intervalos</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">⌘</div><div><div class="nav-title">Pentatónicas</div><div class="nav-sub">Mayor, menor y blues</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">◌</div><div><div class="nav-title">Círculo</div><div class="nav-sub">Círculo de quintas</div></div></a>
+        <a class="nav-item" href="#"><div class="nav-icon">?</div><div><div class="nav-title">Ayuda</div><div class="nav-sub">Conceptos y uso</div></div></a>
+      </nav>
+
+      <div class="sidebar-bottom"><span>◔</span><span>⚙</span><span style="font-size:14px">ES</span></div>
+    </aside>
+
+    <main class="main">
+      <div class="shell">
+        <h1>Explorar</h1>
+
+        <section class="card controls">
+          <div class="field">
+            <label>Tónica</label>
+            <div class="select-wrap"><select><option>G</option></select></div>
+          </div>
+          <div class="field">
+            <label>Escala / Modo</label>
+            <div class="select-wrap"><select><option>Mixolidio</option></select></div>
+          </div>
+          <button class="btn">🔊 Sonido</button>
+          <button class="btn">💡 Entender el modo</button>
+        </section>
+
+        <section class="card scale-card">
+          <div class="scale-block">
+            <div class="scale-title">G Mixolidio</div>
+            <div class="scale-desc">Escala mayor con séptima menor.</div>
+            <div class="pill">Color característico: ♭7</div>
+          </div>
+          <div class="scale-block">
+            <div class="notes-line">
+              <div><div class="note-big">G</div><div class="degree">1</div></div>
+              <div><div class="note-big">A</div><div class="degree">2</div></div>
+              <div><div class="note-big">B</div><div class="degree">3</div></div>
+              <div><div class="note-big">C</div><div class="degree">4</div></div>
+              <div><div class="note-big">D</div><div class="degree">5</div></div>
+              <div><div class="note-big">E</div><div class="degree">6</div></div>
+              <div><div class="note-big char-note">F</div><div class="degree accent">♭7</div></div>
+            </div>
+            <div class="formula">Fórmula:&nbsp;&nbsp;1&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;&nbsp;5&nbsp;&nbsp;6&nbsp;&nbsp;♭7</div>
+          </div>
+          <div class="scale-block">
+            <div class="relation-title">Relación con escala mayor</div>
+            <div class="relation-text">G Mixolidio contiene las mismas notas que <span class="accent">C mayor</span>.<br><br>Mismas notas, distinto centro tonal.</div>
+          </div>
+        </section>
+
+        <section class="card fret-card">
+          <div class="fret-head">
+            <div><h2>Mástil de guitarra</h2><div class="fret-sub">Afinación estándar (E A D G B E) &nbsp;•&nbsp; 12 trastes</div></div>
+            <div class="segmented"><button>Notas</button><button>Grados</button><button class="active">Ambos</button></div>
+          </div>
+
+          <div class="fret-wrap">
+            <div class="string-labels"><span>E</span><span>B</span><span>G</span><span>D</span><span>A</span><span>E</span></div>
+            <div class="fret-scroll">
+              <div id="fretboard" class="fretboard"></div>
+              <div class="fret-numbers">
+                <span>1</span><span>2</span><span class="dot">3</span><span>4</span><span class="dot">5</span><span>6</span><span>7</span><span class="dot">8</span><span>9</span><span class="dot">10</span><span>11</span><span class="dot">12</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span class="legend-item"><i class="legend-dot lg-root"></i>Tónica (G)</span>
+            <span class="legend-item"><i class="legend-dot lg-char"></i>Nota característica (♭7)</span>
+            <span class="legend-item"><i class="legend-dot lg-scale"></i>Notas de la escala</span>
+            <span class="legend-item"><i class="legend-dot lg-other"></i>Otras notas</span>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <div class="card harm-card">
+            <div class="harm-head">
+              <h2>Armonización <span style="font-weight:500;color:#aeb8c8;font-size:16px">(Triadas)</span></h2>
+              <div class="mini-tabs"><button class="active">Triadas</button><button>Tétradas</button></div>
+            </div>
+            <div class="chords">
+              <div class="chord purple"><div class="name">G</div><div class="roman">I</div><div class="quality">Mayor</div></div>
+              <div class="chord blue"><div class="name">Am</div><div class="roman">ii</div><div class="quality">Menor</div></div>
+              <div class="chord orange"><div class="name">B°</div><div class="roman">iii°</div><div class="quality">Disminuido</div></div>
+              <div class="chord blue"><div class="name">C</div><div class="roman">IV</div><div class="quality">Mayor</div></div>
+              <div class="chord cyan"><div class="name">Dm</div><div class="roman">v</div><div class="quality">Menor</div></div>
+              <div class="chord cyan"><div class="name">Em</div><div class="roman">vi</div><div class="quality">Menor</div></div>
+              <div class="chord purple"><div class="name">F</div><div class="roman">♭VII</div><div class="quality">Mayor</div></div>
+            </div>
+          </div>
+
+          <div class="card detail-card">
+            <h2 style="margin-bottom:14px">Detalle del acorde</h2>
+            <div class="detail-layout">
+              <div><div class="big-chord">B°</div><div class="degree-label">iii° grado</div></div>
+              <div class="details">
+                <div class="line">Notas:&nbsp;&nbsp; <b style="color:#ff9720">B</b>&nbsp;&nbsp; <b style="color:#ff9720">D</b>&nbsp;&nbsp; <b style="color:#ff9720">F</b><br>
+                <span class="formula-row">Fórmula:&nbsp;&nbsp;<span>1</span><b>♭3</b><b>♭5</b></span></div>
+                <div style="padding-top:8px">B → D = 3 semitonos (tercera menor)<br>B → F = 6 semitonos (quinta disminuida)<br>Por eso B–D–F forma un acorde disminuido.</div>
+              </div>
+              <div class="mini-diagram"><span class="mini-dot d1"></span><span class="mini-dot d2"></span></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer-space"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const chromatic = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const strings = ['E','B','G','D','A','E'];
+    const scale = new Set(['G','A','B','C','D','E','F']);
+    const root = 'G', characteristic = 'F';
+    const fretboard = document.getElementById('fretboard');
+
+    function noteAt(open, fret){
+      const i = chromatic.indexOf(open);
+      return chromatic[(i + fret) % 12];
+    }
+    strings.forEach(open => {
+      const row = document.createElement('div');
+      row.className = 'string-row';
+      for(let fret=1; fret<=12; fret++){
+        const cell = document.createElement('div');
+        cell.className = 'fret-cell';
+        const note = noteAt(open, fret);
+        const m = document.createElement('div');
+        m.className = 'marker ' + (note === root ? 'root' : note === characteristic ? 'char' : scale.has(note) ? 'scale' : '');
+        m.textContent = note.replace('#','♯');
+        cell.appendChild(m);
+        row.appendChild(cell);
+      }
+      fretboard.appendChild(row);
+    });
+  </script>
+</body>
+</html>
