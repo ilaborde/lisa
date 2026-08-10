@@ -31,6 +31,7 @@ function App() {
   const [showTetrads, setShowTetrads] = useState(false);
   const [labelMode, setLabelMode] = useState<'notes' | 'degrees' | 'both'>('both');
   const [selectedChordLabel, setSelectedChordLabel] = useState('');
+  const [activeSection, setActiveSection] = useState<'explorar' | 'modos' | 'armonia' | 'intervalos' | 'circulo'>('explorar');
 
   const mode = useMemo(() => getModeByKey(scaleKey), [scaleKey]);
   const scaleNotes = useMemo(() => getScaleNotes(root, scaleKey), [root, scaleKey]);
@@ -79,39 +80,39 @@ function App() {
         </div>
 
         <nav className="nav" aria-label="Navegación principal">
-          <a className="nav-item active" href="#explorar">
+          <a className={`nav-item ${activeSection === 'explorar' ? 'active' : ''}`} href="#explorar" onClick={() => setActiveSection('explorar')}>
             <div className="nav-icon">⌘</div>
             <div>
               <div className="nav-title">Explorar</div>
               <div className="nav-sub">Escalas, modos y mástil</div>
             </div>
           </a>
-          <a className="nav-item" href="#modos">
+          <a className={`nav-item ${activeSection === 'modos' ? 'active' : ''}`} href="#modos" onClick={() => setActiveSection('modos')}>
             <div className="nav-icon">☆</div>
             <div>
               <div className="nav-title">Modos</div>
               <div className="nav-sub">Comparador modal</div>
             </div>
           </a>
-          <a className="nav-item" href="#armonia">
+          <a className={`nav-item ${activeSection === 'armonia' ? 'active' : ''}`} href="#armonia" onClick={() => setActiveSection('armonia')}>
             <div className="nav-icon">♮</div>
             <div>
               <div className="nav-title">Armonía</div>
               <div className="nav-sub">Armonización de la escala</div>
             </div>
           </a>
-          <a className="nav-item" href="#intervalos">
+          <a className={`nav-item ${activeSection === 'intervalos' ? 'active' : ''}`} href="#intervalos" onClick={() => setActiveSection('intervalos')}>
             <div className="nav-icon">♬</div>
-            <div>
-              <div className="nav-title">Acordes</div>
-              <div className="nav-sub">Constructor y consulta</div>
-            </div>
-          </a>
-          <a className="nav-item" href="#circulo">
-            <div className="nav-icon">◉</div>
             <div>
               <div className="nav-title">Intervalos</div>
               <div className="nav-sub">Calculadora de intervalos</div>
+            </div>
+          </a>
+          <a className={`nav-item ${activeSection === 'circulo' ? 'active' : ''}`} href="#circulo" onClick={() => setActiveSection('circulo')}>
+            <div className="nav-icon">◉</div>
+            <div>
+              <div className="nav-title">Círculo</div>
+              <div className="nav-sub">Círculo de quintas</div>
             </div>
           </a>
         </nav>
@@ -195,7 +196,7 @@ function App() {
             <div className="fret-head">
               <div>
                 <h2>Mástil de guitarra</h2>
-                <div className="fret-sub">Afinación estándar (E A D G B E) • 12 trastes</div>
+                <div className="fret-sub">Afinación estándar (E A D G B E) • 22 trastes</div>
               </div>
               <div className="segmented">
                 {['notes', 'degrees', 'both'].map((modeOption) => (
@@ -281,12 +282,12 @@ function App() {
           </section>
 
           <section className="grid-two card" id="intervalos">
-            <div>
+            <div className="tool-panel">
               <h2>Intervalos</h2>
               <p>Comprueba el número de semitonos y la calidad del intervalo.</p>
               <IntervalTool />
             </div>
-            <div>
+            <div className="tool-panel">
               <h2>Acordes</h2>
               <p>Consulta fórmulas y notas de acordes desde su raíz.</p>
               <ChordTool />

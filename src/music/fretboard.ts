@@ -25,7 +25,7 @@ export function buildFretboard(root: string, scaleKey: ScaleKey, labelMode: 'not
 
   return STANDARD_TUNING.map((stringRoot) => {
     const openPitch = getPitchClass(stringRoot)!;
-    return Array.from({ length: 13 }, (_, fret) => {
+    return Array.from({ length: 23 }, (_, fret) => {
       const pitch = normalizePitchClass(openPitch + fret);
       const note = scaleSpellingMap[pitch] ?? getPitchName(pitch);
       const inScale = scalePitches.includes(pitch);

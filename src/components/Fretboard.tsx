@@ -9,13 +9,12 @@ type FretboardProps = {
   labelMode: 'notes' | 'degrees' | 'both';
 };
 
-const MARKER_FRETS = [3, 5, 8, 10, 12];
+const MARKER_FRETS = [3, 5, 7, 9, 12, 15, 17, 19, 21];
 
 export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
   const [selected, setSelected] = useState<FretboardCell | null>(null);
   const board = useMemo(() => buildFretboard(root, scaleKey, labelMode), [root, scaleKey, labelMode]);
   const strings = [...board].reverse();
-  const frets = 13;
 
   return (
     <div className="fretboard-card">
@@ -23,7 +22,7 @@ export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
         <div className="fretboard">
           {strings.map((stringRow, stringIndex) => (
             <div key={stringIndex} className="string-row">
-              {stringRow.slice(1, 13).map((cell) => {
+              {stringRow.slice(1, 23).map((cell) => {
                 const statusClass = cell.isRoot
                   ? 'root'
                   : cell.isCharacteristic
@@ -56,7 +55,7 @@ export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
         </div>
 
         <div className="fret-numbers">
-          {Array.from({ length: 12 }, (_, index) => (
+          {Array.from({ length: 22 }, (_, index) => (
             <span key={index} className={MARKER_FRETS.includes(index + 1) ? 'dot' : ''}>
               {index + 1}
             </span>
