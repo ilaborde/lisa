@@ -1,0 +1,2 @@
+import {renderTab} from '../../licks/tab';import type {ReferenceLick} from '../../licks/types';
+export function LickTab({lick,compact=false}:{lick:ReferenceLick;compact?:boolean}){const tab=renderTab(lick);if(!tab)return <div className="transcription-pending">Transcripción pendiente</div>;return <pre className={`lick-tab ${compact?'compact':''}`}>{compact?tab.split('\n').slice(0,3).join('\n'):tab}</pre>}

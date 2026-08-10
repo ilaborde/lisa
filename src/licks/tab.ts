@@ -1,0 +1,3 @@
+import type {LickEvent,ReferenceLick} from './types';const LABELS=['e','B','G','D','A','E'];
+export function tabToken(n:LickEvent){const t=n.targetFret,s=n.technique==='bend'?`b${t??n.fret+2}`:n.technique==='slide'?`/${t??n.fret+2}`:n.technique==='hammer-on'?`h${t??n.fret+2}`:n.technique==='pull-off'?`p${t??Math.max(0,n.fret-2)}`:n.technique==='vibrato'?'~':'';return `${n.fret}${s}`}
+export function renderTab(lick:ReferenceLick){if(!lick.transcription)return '';const rows=LABELS.map(l=>`${l}|`);lick.transcription.forEach(n=>{const token=tabToken(n),width=token.length+1;for(let i=0;i<6;i++)rows[i]+=(i===n.string-1?token.padEnd(width,'-'):'-'.repeat(width))});return rows.map(r=>r+'|').join('\n')}
