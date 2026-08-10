@@ -22,7 +22,7 @@ export default function App(){
   {active==='explorar'&&<ExploreSection instrument={instrument} root={root} scaleKey={scaleKey} selectedChord={selectedChord} onRoot={setRoot} onScale={setScaleKey} onChord={setSelectedChord} onOpenChord={openChord}/>} 
   {active==='acordes'&&<ChordsSection instrument={instrument} root={root} scaleKey={scaleKey} chord={selectedChord} view={chordView} onView={setChordView} onChord={setSelectedChord}/>} 
   {active==='progresiones'&&<ProgressionsSection instrument={instrument} root={root} scaleKey={scaleKey} progression={selectedProgression} onChord={setSelectedChord} onProgression={setSelectedProgression} onOpenChord={openChord}/>} 
-  {active==='composicion'&&<CompositionSection root={root}/>} 
+  {active==='composicion'&&<CompositionSection root={root} scaleKey={scaleKey} progression={selectedProgression} onOpenChord={openChord}/>} 
   {active==='herramientas'&&<ToolsSection instrument={instrument} root={root} onRoot={setRoot} onExplore={next=>explore(next,'major')} onChord={chord=>openChord(chord,'analysis')}/>}<footer>Lisa · teoría musical para guitarra y piano</footer>
  </div></main></div>
 }
