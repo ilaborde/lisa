@@ -2,7 +2,7 @@ import { getChordTypeByKey, type ChordQuality } from './chords';
 import { getPitchClass, getPitchName, normalizePitchClass } from './notes';
 import { STANDARD_TUNING } from './fretboard';
 
-export type ChordInversion = 'root' | 'first' | 'second' | 'third';
+export type ChordInversion = 'root' | 'first' | 'second' | 'third' | 'extension';
 export type VoicingPosition = { string: string; stringIndex: number; fret: number; pitchClass: number; noteName: string; chordTone: number };
 export type GuitarVoicing = { id: string; positions: VoicingPosition[]; inversion: ChordInversion; bassNote: string; minFret: number; maxFret: number };
 
@@ -10,7 +10,8 @@ const INVERSION_NAMES: ChordInversion[] = ['root','first','second','third'];
 
 export function buildVoicings(root: string, quality: ChordQuality, maxFret = 15): GuitarVoicing[] {
   const rootPitch = getPitchClass(root); if (rootPitch === null) return [];
-  const formula = getChordTypeByKey(quality).formula;
+  const definition=getChordTypeByKey(quality);const formula = definition.voicingFormula??definition.formula;
+  const fullPitches=definition.formula.map(interval=>normalizePitchClass(rootPitch+interval));
   const chordPitches = formula.map(interval => normalizePitchClass(rootPitch + interval));
   const candidates = STANDARD_TUNING.map((string, stringIndex) => {
     const open = getPitchClass(string)!;
@@ -32,7 +33,7 @@ export function buildVoicings(root: string, quality: ChordQuality, maxFret = 15)
           }
         }
         if(positions.length<3||!chordPitches.every(p=>positions.some(pos=>pos.pitchClass===p))) continue;
-        const tone=chordPitches.indexOf(bass.pitchClass); const inversion=INVERSION_NAMES[tone]??'root';
+        const tone=fullPitches.indexOf(bass.pitchClass); const inversion=INVERSION_NAMES[tone]??'extension';
         const normalized=positions.map(p=>({...p,noteName:getPitchName(p.pitchClass,root.includes('b')?'flat':'sharp'),chordTone:chordPitches.indexOf(p.pitchClass)}));
         const id=normalized.map(p=>`${p.stringIndex}:${p.fret}`).join('-');
         results.set(id,{id,positions:normalized,inversion,bassNote:normalized[0].noteName,minFret:Math.min(...normalized.map(p=>p.fret)),maxFret:Math.max(...normalized.map(p=>p.fret))});

@@ -7,6 +7,9 @@ export * from './fretboard';
 export * from './voicings';
 export * from './compatibility';
 export * from './progressions';
+export * from './composition';
+export * from './styleProgressions';
+export * from './compositionVariations';
 
 import { getIntervalBetween } from './intervals';
 import { getChordFromScale } from './chords';
