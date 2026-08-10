@@ -1,0 +1,3 @@
+import {beforeEach,describe,expect,it} from 'vitest';import {DEFAULT_INSTRUMENT,getSavedInstrument,saveInstrument} from '../instrument';
+const values=new Map<string,string>();Object.defineProperty(globalThis,'localStorage',{value:{getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>values.set(k,v),removeItem:(k:string)=>values.delete(k)},configurable:true});
+describe('preferencia de instrumento',()=>{beforeEach(()=>values.clear());it('usa guitarra por defecto',()=>expect(getSavedInstrument()).toBe(DEFAULT_INSTRUMENT));it('persiste piano',()=>{saveInstrument('piano');expect(getSavedInstrument()).toBe('piano')});it('ignora valores desconocidos',()=>{localStorage.setItem('lisa-instrument','bass');expect(getSavedInstrument()).toBe('guitar')})});

@@ -1,0 +1,23 @@
+.chord-hero{display:flex;align-items:end;justify-content:space-between;gap:24px}
+.chord-hero h2{font-size:clamp(34px,6vw,62px);color:#d7b5ff}
+.chord-hero p{margin:5px 0}
+.chord-hero .controls{flex:1;justify-content:end}
+.chord-construction{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.chord-construction article{display:grid;gap:4px;padding:13px;border:1px solid #35445b;border-radius:10px;background:#0d1828}
+.chord-construction strong{font-size:24px;color:#8fcfff}
+.chord-construction span{color:#c58eff}
+.chord-construction small{color:var(--muted)}
+
+.progression-context{min-width:0;max-width:100%;overflow:hidden}
+.active-progression{display:flex;width:100%;min-width:0;max-width:100%;gap:9px;overflow-x:auto;overflow-y:hidden;padding:10px 0 6px;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+.active-progression article{flex:0 0 180px;min-width:0;max-width:calc(100vw - 64px);padding:11px;border:1px solid #35445b;border-radius:10px;background:#0d1828;overflow:hidden}
+.progression-chord{max-width:100%;overflow:hidden;border:0;background:transparent;color:#d6adff;font-size:23px;font-weight:800;padding:0;text-overflow:ellipsis;white-space:nowrap}
+.active-progression article>span{display:block;min-height:25px;overflow:hidden;color:var(--muted);text-overflow:ellipsis;white-space:nowrap}
+.active-progression article>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.active-progression .context-action{flex:1 1 auto;min-width:0;padding:6px 8px;font-size:12px}
+
+@media(max-width:680px){
+ .chord-hero{align-items:stretch;flex-direction:column}
+ .chord-hero .controls{width:100%}
+ .active-progression article{flex-basis:min(180px,calc(100vw - 58px))}
+}
