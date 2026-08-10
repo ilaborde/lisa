@@ -1,7 +1,7 @@
 import { getPitchClass, getScaleSpellings, normalizePitchClass, spellPitchWithLetter, cycleLetter } from './notes';
 import { getIntervalInfo } from './intervals';
 
-export type ScaleKey = 'ionian' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian' | 'aeolian' | 'locrian' | 'major' | 'minor' | 'major-pentatonic' | 'minor-pentatonic' | 'minor-blues';
+export type ScaleKey = 'ionian' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian' | 'aeolian' | 'locrian' | 'major' | 'minor' | 'harmonic-minor' | 'melodic-minor' | 'major-pentatonic' | 'minor-pentatonic' | 'minor-blues';
 export type DiatonicModeKey = 'ionian' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian' | 'aeolian' | 'locrian';
 
 export type ScaleRecord = {
@@ -18,21 +18,24 @@ export type ScaleRecord = {
 };
 
 export const SCALE_DEFINITIONS: readonly ScaleRecord[] = [
-  { key: 'ionian', name: 'Jónico', formula: [0,2,4,5,7,9,11], degrees: [1,2,3,4,5,6,7], modeDegree: 1, description: 'El modo mayor de referencia.' },
+  { key: 'ionian', name: 'Jónico (mayor)', formula: [0,2,4,5,7,9,11], degrees: [1,2,3,4,5,6,7], modeDegree: 1, description: 'El modo mayor de referencia.' },
   { key: 'dorian', name: 'Dórico', formula: [0,2,3,5,7,9,10], degrees: [1,2,3,4,5,6,7], modeDegree: 2, description: 'Modo menor con sexta mayor.', characteristicDegree: '6', characteristicDescription: 'La sexta mayor lo distingue de otros modos menores.' },
   { key: 'phrygian', name: 'Frigio', formula: [0,1,3,5,7,8,10], degrees: [1,2,3,4,5,6,7], modeDegree: 3, description: 'Modo menor con segunda menor.', characteristicDegree: 'b2', characteristicDescription: 'La segunda menor aporta su tensión característica.' },
   { key: 'lydian', name: 'Lidio', formula: [0,2,4,6,7,9,11], degrees: [1,2,3,4,5,6,7], modeDegree: 4, description: 'Modo mayor con cuarta aumentada.', characteristicDegree: '#4', characteristicDescription: 'La cuarta aumentada lo diferencia del modo mayor.' },
   { key: 'mixolydian', name: 'Mixolidio', formula: [0,2,4,5,7,9,10], degrees: [1,2,3,4,5,6,7], modeDegree: 5, description: 'Modo mayor con séptima menor.', characteristicDegree: 'b7', characteristicDescription: 'La séptima menor lo diferencia de la escala mayor.' },
-  { key: 'aeolian', name: 'Eólico', formula: [0,2,3,5,7,8,10], degrees: [1,2,3,4,5,6,7], modeDegree: 6, description: 'La escala menor natural.', characteristicDegree: 'b6', characteristicDescription: 'La sexta menor es un rasgo modal frente a otros modos menores.' },
+  { key: 'aeolian', name: 'Eólico (menor natural)', formula: [0,2,3,5,7,8,10], degrees: [1,2,3,4,5,6,7], modeDegree: 6, description: 'La escala menor natural.', characteristicDegree: 'b6', characteristicDescription: 'La sexta menor es un rasgo modal frente a otros modos menores.' },
   { key: 'locrian', name: 'Locrio', formula: [0,1,3,5,6,8,10], degrees: [1,2,3,4,5,6,7], modeDegree: 7, description: 'Modo menor inestable con quinta disminuida.', characteristicDegree: 'b5', characteristicDescription: 'La quinta disminuida debilita el acorde de tónica.' },
   { key: 'major', name: 'Mayor', formula: [0,2,4,5,7,9,11], degrees: [1,2,3,4,5,6,7], description: 'Escala diatónica mayor.' },
   { key: 'minor', name: 'Menor natural', formula: [0,2,3,5,7,8,10], degrees: [1,2,3,4,5,6,7], description: 'Escala menor natural.', characteristicDegree: 'b6', characteristicDescription: 'La sexta menor es un rasgo de la escala menor natural.' },
+  { key: 'harmonic-minor', name: 'Menor armónica', formula: [0,2,3,5,7,8,11], degrees: [1,2,3,4,5,6,7], description: 'Escala menor con séptima mayor.', characteristicDegree: '7', characteristicDescription: 'La sensible crea una fuerte atracción hacia la tónica.', pedagogicalNotes: ['El intervalo b6–7 produce una segunda aumentada.'] },
+  { key: 'melodic-minor', name: 'Menor melódica', formula: [0,2,3,5,7,9,11], degrees: [1,2,3,4,5,6,7], description: 'Forma ascendente de la escala menor melódica.', characteristicDegree: '6', characteristicDescription: 'La sexta y séptima mayores suavizan el movimiento hacia la tónica.', pedagogicalNotes: ['En jazz suele utilizarse esta misma forma al ascender y descender.'] },
   { key: 'major-pentatonic', name: 'Pentatónica mayor', formula: [0,2,4,7,9], degrees: [1,2,3,5,6], description: 'Pentatónica de carácter mayor.', omittedDegrees: ['4','7'], pedagogicalNotes: ['No contiene semitonos.'] },
   { key: 'minor-pentatonic', name: 'Pentatónica menor', formula: [0,3,5,7,10], degrees: [1,3,4,5,7], description: 'Pentatónica de carácter menor.' },
   { key: 'minor-blues', name: 'Blues menor', formula: [0,3,5,6,7,10], degrees: [1,3,4,5,5,7], description: 'Pentatónica menor con la blue note añadida.', characteristicDegree: 'b5', characteristicDescription: 'La b5 funciona como blue note.' },
 ];
 
 export const ALL_SCALES = SCALE_DEFINITIONS;
+export const SELECTABLE_SCALES = SCALE_DEFINITIONS.filter((scale) => scale.key !== 'major' && scale.key !== 'minor');
 export const DIATONIC_MODE_ORDER: readonly DiatonicModeKey[] = ['lydian','ionian','mixolydian','dorian','aeolian','phrygian','locrian'];
 
 export function getScaleByKey(key: ScaleKey): ScaleRecord { return SCALE_DEFINITIONS.find((scale) => scale.key === key) ?? SCALE_DEFINITIONS[0]; }

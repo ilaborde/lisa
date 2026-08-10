@@ -4,6 +4,7 @@ export * from './scales';
 export * from './chords';
 export * from './harmonization';
 export * from './fretboard';
+export * from './voicings';
 
 import { getIntervalBetween } from './intervals';
 import { getChordFromScale } from './chords';
