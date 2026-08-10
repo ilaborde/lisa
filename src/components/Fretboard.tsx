@@ -3,84 +3,19 @@ import { buildFretboard, type FretboardCell } from '../music/fretboard';
 import { getIntervalBetween } from '../music/intervals';
 import type { ScaleKey } from '../music/scales';
 
-type FretboardProps = {
-  root: string;
-  scaleKey: ScaleKey;
-  labelMode: 'notes' | 'degrees' | 'both';
-};
-
-const MARKER_FRETS = [3, 5, 7, 9, 12, 15, 17, 19, 21];
-
-export function Fretboard({ root, scaleKey, labelMode }: FretboardProps) {
-  const [selected, setSelected] = useState<FretboardCell | null>(null);
-  const board = useMemo(() => buildFretboard(root, scaleKey, labelMode), [root, scaleKey, labelMode]);
-  const strings = [...board].reverse();
-
-  return (
-    <div className="fretboard-card">
-      <div className="fretboard-frame">
-        <div className="fretboard">
-          {strings.map((stringRow, stringIndex) => (
-            <div key={stringIndex} className="string-row">
-              {stringRow.slice(1, 23).map((cell) => {
-                const statusClass = cell.isRoot
-                  ? 'root'
-                  : cell.isCharacteristic
-                  ? 'char'
-                  : cell.inScale
-                  ? 'scale'
-                  : '';
-
-                const showNote = labelMode !== 'degrees';
-                const showDegree = labelMode !== 'notes';
-                const noteText = cell.note.replace('#', '♯');
-
-                return (
-                  <button
-                    key={cell.fret}
-                    type="button"
-                    className="fret-cell"
-                    onClick={() => setSelected(cell)}
-                    aria-label={`${cell.note} ${cell.degree ?? 'Posición fuera de escala'}`}
-                  >
-                    <div className={`marker ${statusClass}`}>
-                      {showNote && <span className="marker-note">{noteText}</span>}
-                      {showDegree && cell.degree ? <span className="marker-degree">{cell.degree}</span> : null}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-
-        <div className="fret-numbers">
-          {Array.from({ length: 22 }, (_, index) => (
-            <span key={index} className={MARKER_FRETS.includes(index + 1) ? 'dot' : ''}>
-              {index + 1}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="fretboard-info">
-        <div className="fretboard-info-card">
-          {selected ? (
-            <>
-              <p className="metadata-label">Posición seleccionada</p>
-              <p className="fretboard-selection-title">
-                {selected.note} — {selected.degree ?? 'Fuera de escala'}
-              </p>
-              <p>{selected.degree ? `${selected.note} → ${getIntervalBetween(root, selected.note).description}` : 'Nota fuera de la escala seleccionada.'}</p>
-            </>
-          ) : (
-            <>
-              <p className="metadata-label">Toca una nota del mástil</p>
-              <p>Haz click en cualquier casilla para ver la información de la posición.</p>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+type Props={root:string;scaleKey:ScaleKey;labelMode:'notes'|'degrees'|'both'};
+const DOTS=[3,5,7,9,12,15,17,19,21];
+export function Fretboard({root,scaleKey,labelMode}:Props){
+ const [selected,setSelected]=useState<FretboardCell|null>(null); const board=useMemo(()=>buildFretboard(root,scaleKey),[root,scaleKey]);
+ return <div className="fretboard-component"><div className="fretboard-scroll"><div className="fretboard-stage">
+  <div className="string-labels">{[...board].reverse().map((row,i)=><span key={i}>{row[0].string}</span>)}</div>
+  <div><div className="fretboard">{[...board].reverse().map((row,i)=><div className="string-row" key={i}>{row.slice(1).map(cell=>{
+   const status=cell.isRoot?'root':cell.isCharacteristic?'characteristic':cell.inScale?'scale':'outside';
+   return <button type="button" key={cell.fret} className="fret-cell" onClick={()=>setSelected(cell)} aria-label={`Cuerda ${cell.string}, traste ${cell.fret}: ${cell.noteName}${cell.degree?`, grado ${cell.degree}`:', fuera de escala'}`}>
+    <span className={`marker ${status}`}>{labelMode!=='degrees'&&<span>{cell.noteName.replace('#','♯').replace('b','♭')}</span>}{labelMode!=='notes'&&cell.degree&&<small>{cell.degree}</small>}</span>
+   </button>})}</div>)}</div>
+   <div className="fret-numbers">{Array.from({length:22},(_,i)=><span key={i} className={DOTS.includes(i+1)?(i+1===12?'double-dot':'dot'):''}>{i+1}</span>)}</div>
+  </div></div></div>
+  <div className="fretboard-info">{selected?<><strong>{selected.noteName} · cuerda {selected.string}, traste {selected.fret}</strong><span>{selected.degree?`${selected.degree} — ${getIntervalBetween(root,selected.noteName).description}`:'Fuera de la escala seleccionada'}</span></>:<span>Seleccioná una posición para ver sus datos.</span>}</div>
+ </div>;
 }

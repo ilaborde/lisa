@@ -1,45 +1,9 @@
-import { getModeOrder, getScaleByKey, getScaleNotes, type ScaleKey } from '../music/scales';
-import { getParallelScaleInfo } from '../music/theory';
-
-type ModeComparerProps = {
-  root: string;
-  currentKey: ScaleKey;
-};
-
-const modeNames: ScaleKey[] = ['lydian', 'ionian', 'mixolydian', 'dorian', 'aeolian', 'phrygian', 'locrian'];
-
-export function ModeComparer({ root, currentKey }: ModeComparerProps) {
-  const currentIndex = modeNames.indexOf(currentKey);
-  const currentNotes = getScaleNotes(root, currentKey);
-  const previous = modeNames[(currentIndex - 1 + modeNames.length) % modeNames.length];
-  const next = modeNames[(currentIndex + 1) % modeNames.length];
-  const previousNotes = getScaleNotes(root, previous);
-
-  const changedNote = currentNotes.find((note, index) => note !== previousNotes[index]);
-
-  return (
-    <div className="mode-comparer">
-      <div className="mode-comparer-grid">
-        {modeNames.map((modeKey) => {
-          const scale = getScaleByKey(modeKey);
-          return (
-            <div key={modeKey} className={`mode-chip ${modeKey === currentKey ? 'active' : ''}`}>
-              <strong>{scale.name}</strong>
-              <p>{getScaleNotes(root, modeKey).join(' ')}</p>
-            </div>
-          );
-        })}
-      </div>
-      <div className="mode-change">
-        <p>
-          Cambio: <strong>{previousNotes.join(' ')}</strong> → <strong>{currentNotes.join(' ')}</strong>
-        </p>
-        {changedNote ? <p>Nota cambiada: {changedNote}</p> : null}
-      </div>
-      <div className="mode-sequence">
-        <p>Lidio → Jónico → Mixolidio → Dórico → Eólico → Frigio → Locrio</p>
-        <p>Cada paso baja una nota un semitono.</p>
-      </div>
-    </div>
-  );
+import { DIATONIC_MODE_ORDER,getScaleByKey,getScaleNotes,isDiatonicMode,type ScaleKey } from '../music/scales';
+const CHANGES=[{from:'#4',to:'4'},{from:'7',to:'b7'},{from:'3',to:'b3'},{from:'6',to:'b6'},{from:'2',to:'b2'},{from:'5',to:'b5'}];
+export function ModeComparer({root,currentKey}:{root:string;currentKey:ScaleKey}){
+ const reference=isDiatonicMode(currentKey)?currentKey:'ionian';
+ return <div className="mode-comparer">{!isDiatonicMode(currentKey)&&<p className="notice">El continuo compara únicamente los siete modos diatónicos. Se destaca Jónico como referencia.</p>}
+  <div className="mode-list">{DIATONIC_MODE_ORDER.map(key=><div className={`mode-chip ${key===reference?'active':''}`} key={key}><strong>{getScaleByKey(key).name}</strong><span>{getScaleNotes(root,key).join(' ')}</span></div>)}</div>
+  <div className="transitions">{CHANGES.map((change,i)=>{const from=DIATONIC_MODE_ORDER[i],to=DIATONIC_MODE_ORDER[i+1],a=getScaleNotes(root,from),b=getScaleNotes(root,to),index=a.findIndex((n,j)=>n!==b[j]);return <div key={from}><strong>{getScaleByKey(from).name} → {getScaleByKey(to).name}</strong><span>{change.from} → {change.to}</span><span>{a[index]} → {b[index]}</span></div>})}</div>
+ </div>;
 }

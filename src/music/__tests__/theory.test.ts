@@ -1,42 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { getScaleNotes, getChordFromRoot, buildInterval } from '../theory';
-
-describe('Motor musical básico', () => {
-  it('G mixolidio produce G A B C D E F y grados 1 2 3 4 5 6 b7', () => {
-    const scale = getScaleNotes('G', 'mixolydian');
-    expect(scale).toEqual(['G', 'A', 'B', 'C', 'D', 'E', 'F']);
-    const harmony = getChordFromRoot('G', 'mixolydian', false).map((chord) => chord.label);
-    expect(harmony).toEqual(['G', 'Am', 'Bdim', 'C', 'Dm', 'Em', 'F']);
-  });
-
-  it('C mayor produce C D E F G A B y armonización correcta', () => {
-    const scale = getScaleNotes('C', 'major');
-    expect(scale).toEqual(['C', 'D', 'E', 'F', 'G', 'A', 'B']);
-    const harmony = getChordFromRoot('C', 'major', false).map((chord) => chord.label);
-    expect(harmony).toEqual(['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim']);
-  });
-
-  it('D dórico produce D E F G A B C', () => {
-    const scale = getScaleNotes('D', 'dorian');
-    expect(scale).toEqual(['D', 'E', 'F', 'G', 'A', 'B', 'C']);
-  });
-
-  it('A menor pentatónica produce A C D E G', () => {
-    const scale = getScaleNotes('A', 'minor-pentatonic');
-    expect(scale).toEqual(['A', 'C', 'D', 'E', 'G']);
-  });
-
-  it('B disminuido produce B D F', () => {
-    const harmony = getChordFromRoot('B', 'locrian', false).find((chord) => chord.label.startsWith('B'));
-    expect(harmony?.notes.slice(0, 3)).toEqual(['B', 'D', 'F']);
-  });
-
-  it('Intervalos: B → D = 3 semitonos, B → F = 6 semitonos', () => {
-    const intervalBD = buildInterval('B', 'D');
-    const intervalBF = buildInterval('B', 'F');
-    expect(intervalBD).toBeDefined();
-    expect(intervalBD?.quality).toContain('menor');
-    expect(intervalBF).toBeDefined();
-    expect(intervalBF?.description).toContain('disminuida');
-  });
-});
+import {describe,expect,it} from 'vitest';
+import {buildChord,buildFretboard,getChordFromScale,getParentMajor,getScaleByKey,getScaleNotes} from '../theory';
+describe('escalas y spelling',()=>{const cases:[string,Parameters<typeof getScaleNotes>[1],string[]][]=[['C','major',['C','D','E','F','G','A','B']],['G','major',['G','A','B','C','D','E','F#']],['F','major',['F','G','A','Bb','C','D','E']],['Bb','major',['Bb','C','D','Eb','F','G','A']],['D','major',['D','E','F#','G','A','B','C#']],['Eb','major',['Eb','F','G','Ab','Bb','C','D']],['F#','major',['F#','G#','A#','B','C#','D#','E#']],['G','mixolydian',['G','A','B','C','D','E','F']],['D','dorian',['D','E','F','G','A','B','C']],['E','phrygian',['E','F','G','A','B','C','D']],['F','lydian',['F','G','A','B','C','D','E']],['A','aeolian',['A','B','C','D','E','F','G']],['B','locrian',['B','C','D','E','F','G','A']],['C','major-pentatonic',['C','D','E','G','A']],['A','minor-pentatonic',['A','C','D','E','G']],['A','minor-blues',['A','C','D','Eb','E','G']]];it.each(cases)('%s %s',(root,key,notes)=>expect(getScaleNotes(root,key)).toEqual(notes));it('no inventa característica para pentatónica mayor',()=>expect(getScaleByKey('major-pentatonic').characteristicDegree).toBeUndefined())});
+describe('acordes',()=>{const cases:[string,Parameters<typeof buildChord>[1],string[]][]=[['C','major',['C','E','G']],['C','minor',['C','Eb','G']],['B','diminished',['B','D','F']],['F#','major',['F#','A#','C#']],['Bb','major',['Bb','D','F']],['C#','diminished',['C#','E','G']],['C','dominant7',['C','E','G','Bb']],['B','major7',['B','D#','F#','A#']],['F#','halfDiminished7',['F#','A','C','E']],['B','diminished7',['B','D','F','Ab']]];it.each(cases)('%s %s',(root,type,notes)=>expect(buildChord(root,type)?.notes).toEqual(notes))});
+describe('armonización',()=>{const cases:[string,Parameters<typeof getChordFromScale>[1],string[],string[]][]=[['C','major',['C','Dm','Em','F','G','Am','Bdim'],['I','ii','iii','IV','V','vi','vii°']],['G','mixolydian',['G','Am','Bdim','C','Dm','Em','F'],['I','ii','iii°','IV','v','vi','bVII']],['D','dorian',['Dm','Em','F','G','Am','Bdim','C'],['i','ii','bIII','IV','v','vi°','bVII']],['A','aeolian',['Am','Bdim','C','Dm','Em','F','G'],['i','ii°','bIII','iv','v','bVI','bVII']]];it.each(cases)('%s %s',(root,key,labels,romans)=>{const h=getChordFromScale(root,key);expect(h.map(c=>c.label)).toEqual(labels);expect(h.map(c=>c.degreeName)).toEqual(romans)})});
+describe('escala mayor madre',()=>{it.each([['G','mixolydian','C'],['D','dorian','C'],['E','phrygian','C'],['F','lydian','C'],['A','aeolian','C'],['B','locrian','C']] as const)('%s %s',(root,key,parent)=>expect(getParentMajor(root,key)?.root).toBe(parent));it('funciona con alteraciones',()=>expect(getParentMajor('Bb','mixolydian')?.root).toBe('Eb'))});
+describe('mástil',()=>{it('devuelve 6 cuerdas y 23 posiciones con datos separados',()=>{const board=buildFretboard('G','mixolydian');expect(board).toHaveLength(6);expect(board.every(row=>row.length===23)).toBe(true);expect(board[0][3]).toMatchObject({pitchClass:7,noteName:'G',fret:3,string:'E',inScale:true,degree:'1',isRoot:true,isCharacteristic:false})});it('marca el rasgo sólo cuando existe',()=>{expect(buildFretboard('C','major-pentatonic').flat().some(cell=>cell.isCharacteristic)).toBe(false);expect(buildFretboard('G','mixolydian').flat().some(cell=>cell.degree==='b7'&&cell.isCharacteristic)).toBe(true)})});
