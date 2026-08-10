@@ -1,4 +1,0 @@
-import {getPitchClass,getPitchName,normalizePitchClass} from '../music/notes';import type {LickEvent,ReferenceLick} from './types';
-export function theoreticalTranspose(from:string,to:string){const a=getPitchClass(from),b=getPitchClass(to);return a===null||b===null?0:normalizePitchClass(b-a)}
-export function transposePosition(note:LickEvent,semitones:number,maxFret=22):LickEvent{let fret=note.fret+semitones;while(fret>maxFret)fret-=12;while(fret<0)fret+=12;const correction=fret-(note.fret+semitones);return {...note,fret,targetFret:note.targetFret===undefined?undefined:Math.max(0,Math.min(maxFret,note.targetFret+semitones+correction))}}
-export function transposeLick(lick:ReferenceLick,to:string):ReferenceLick{const shift=theoreticalTranspose(lick.originalKey,to);return {...lick,originalKey:getPitchName(getPitchClass(to)??0,to.includes('b')?'flat':'sharp'),transcription:lick.transcription?.map(n=>transposePosition(n,shift))}}

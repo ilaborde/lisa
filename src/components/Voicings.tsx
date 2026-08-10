@@ -1,4 +1,4 @@
-import {useMemo,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import {ALL_CHORD_TYPES,buildChord,getChordTypeByKey,isChordQuality,type ChordQuality} from '../music/chords';
 import {ROOT_OPTIONS} from '../music/notes';
 import {buildVoicings,type ChordInversion,type GuitarVoicing} from '../music/voicings';
@@ -6,8 +6,9 @@ import {buildVoicings,type ChordInversion,type GuitarVoicing} from '../music/voi
 const INVERSION_LABELS:Record<ChordInversion,string>={root:'Estado fundamental',first:'Primera inversión',second:'Segunda inversión',third:'Tercera inversión',extension:'Extensión en el bajo'};
 function VoicingDiagram({voicing}:{voicing:GuitarVoicing}){const start=voicing.minFret===0?0:Math.max(1,voicing.minFret);const frets=Array.from({length:5},(_,i)=>start+i);return <article className="voicing-card"><header><strong>{INVERSION_LABELS[voicing.inversion]}</strong><span>Bajo: {voicing.bassNote}</span></header><div className="voicing-diagram"><div className="voicing-fret-labels"><span/>{frets.map(f=><span key={f}>{f}</span>)}</div>{[5,4,3,2,1,0].map(stringIndex=><div className="voicing-string" key={stringIndex}><b>{['E','A','D','G','B','E'][stringIndex]}</b>{frets.map(fret=>{const position=voicing.positions.find(p=>p.stringIndex===stringIndex&&p.fret===fret);return <span key={fret} className={position?`tone tone-${position.chordTone}`:''}>{position?.noteName??''}</span>})}</div>)}</div></article>}
 
-export function Voicings(){
+export function Voicings({selectedChord}:{selectedChord?:import('../music/chords').ChordRecord|null}){
  const[root,setRoot]=useState('C'),[quality,setQuality]=useState<ChordQuality>('major'),[inversion,setInversion]=useState<'all'|ChordInversion>('all');
+ useEffect(()=>{if(selectedChord){setRoot(selectedChord.root);setQuality(selectedChord.quality)}},[selectedChord]);
  const all=useMemo(()=>buildVoicings(root,quality),[root,quality]),chord=useMemo(()=>buildChord(root,quality),[root,quality]),definition=getChordTypeByKey(quality);
  const voicings=inversion==='all'?all:all.filter(v=>v.inversion===inversion),extended=Boolean(definition.voicingFormula);
  const prioritizedDegrees=definition.voicingFormula?.map(interval=>definition.degreeLabels?.[definition.formula.indexOf(interval)]).filter((degree):degree is string=>Boolean(degree));

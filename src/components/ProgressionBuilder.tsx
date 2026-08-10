@@ -7,7 +7,7 @@ import type {ScaleKey} from '../music/scales';
 import {MUSICAL_STYLES,resolveStyleProgression,STYLE_PROGRESSIONS,type MusicalStyle,type ProgressionMode,type StyleProgression} from '../music/styleProgressions';
 import {getProgressionVariations,type ProgressionVariation} from '../music/compositionVariations';
 
-export function ProgressionBuilder({root,scaleKey}:{root:string;scaleKey:ScaleKey}){
+export function ProgressionBuilder({root,scaleKey,onSelectChord}:{root:string;scaleKey:ScaleKey;onSelectChord?:(chord:ChordRecord)=>void}){
  const[progressionRoot,setProgressionRoot]=useState(root),[tetrads,setTetrads]=useState(true),[items,setItems]=useState<ProgressionItem[]>([]),[style,setStyle]=useState<'all'|MusicalStyle>('all'),[modeFilter,setModeFilter]=useState<'all'|ProgressionMode>('all');const nextId=useRef(0);
  useEffect(()=>{setProgressionRoot(root);setItems([])},[root,scaleKey]);
  const harmony=useMemo(()=>getChordFromScale(progressionRoot,scaleKey,tetrads),[progressionRoot,scaleKey,tetrads]);
@@ -18,7 +18,7 @@ export function ProgressionBuilder({root,scaleKey}:{root:string;scaleKey:ScaleKe
  const stylePresets=useMemo(()=>STYLE_PROGRESSIONS.filter(preset=>(style==='all'||preset.style===style)&&(modeFilter==='all'||preset.mode===modeFilter||preset.mode==='either')),[style,modeFilter]);
  const variations=useMemo(()=>getProgressionVariations(items.map(item=>item.chord),progressionRoot,scaleKey),[items,progressionRoot,scaleKey]);
  const formatted=formatProgression(items);
- function append(chord:ChordRecord,annotation?:string){setItems(current=>[...current,{id:`progression-${nextId.current++}`,chord,annotation}])}
+ function append(chord:ChordRecord,annotation?:string){onSelectChord?.(chord);setItems(current=>[...current,{id:`progression-${nextId.current++}`,chord,annotation}])}
  function appendCadence(chords:ChordRecord[],name:string){setItems(current=>appendProgressionItems(current,chords.map(chord=>({id:`progression-${nextId.current++}`,chord,annotation:name}))))}
  function appendStylePreset(preset:StyleProgression){const resolved=resolveStyleProgression(progressionRoot,preset);if(resolved)setItems(current=>appendProgressionItems(current,resolved.chords.map(chord=>({id:`progression-${nextId.current++}`,chord,annotation:`${preset.style} · ${preset.name}`}))))}
  function applyVariation(variation:ProgressionVariation){setItems(variation.chords.map(chord=>({id:`progression-${nextId.current++}`,chord,annotation:variation.name})))}

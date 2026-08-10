@@ -1,0 +1,6 @@
+export type LearningProgress={version:1;completedLessons:string[];lastLessonId?:string;correctExercises:Record<string,number>;savedSteps:Record<string,number>};const KEY='lisa-learning-progress-v1';const EMPTY:LearningProgress={version:1,completedLessons:[],correctExercises:{},savedSteps:{}};
+export function getLearningProgress():LearningProgress{if(typeof localStorage==='undefined')return {...EMPTY,completedLessons:[],correctExercises:{},savedSteps:{}};try{const parsed=JSON.parse(localStorage.getItem(KEY)??'null');return parsed?.version===1?parsed:{...EMPTY}}catch{return {...EMPTY}}}
+function save(p:LearningProgress){if(typeof localStorage!=='undefined')localStorage.setItem(KEY,JSON.stringify(p));return p}
+export function markLessonComplete(id:string){const p=getLearningProgress();return save({...p,lastLessonId:id,completedLessons:p.completedLessons.includes(id)?p.completedLessons:[...p.completedLessons,id]})}
+export function saveLessonStep(id:string,step:number,correct=false){const p=getLearningProgress();return save({...p,lastLessonId:id,savedSteps:{...p.savedSteps,[id]:step},correctExercises:correct?{...p.correctExercises,[id]:(p.correctExercises[id]??0)+1}:p.correctExercises})}
+export function resetLearningProgress(){if(typeof localStorage!=='undefined')localStorage.removeItem(KEY);return getLearningProgress()}
