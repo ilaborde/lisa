@@ -9,13 +9,13 @@ import {Voicings} from '../components/Voicings';
 import {PianoVoicings} from '../components/PianoVoicings';
 
 export type ChordView='analysis'|'voicings';
-export function ChordsSection({instrument,root,scaleKey,chord,view,onView,onChord}:{instrument:Instrument;root:string;scaleKey:ScaleKey;chord:ChordRecord|null;view:ChordView;onView:(view:ChordView)=>void;onChord:(chord:ChordRecord)=>void}){
+export function ChordsSection({instrument,root,scaleKey,chord,view,onView,onChord,onPractice}:{instrument:Instrument;root:string;scaleKey:ScaleKey;chord:ChordRecord|null;view:ChordView;onView:(view:ChordView)=>void;onChord:(chord:ChordRecord)=>void;onPractice:(chord:ChordRecord)=>void}){
  const current=chord??buildChord('C','major')!;
  const[manualRoot,setManualRoot]=useState(current.root),[manualType,setManualType]=useState<ChordQuality>(current.quality);
  useEffect(()=>{setManualRoot(current.root);setManualType(current.quality)},[current.root,current.quality]);
  const contextualChord=useMemo(()=>[...getChordFromScale(root,scaleKey,false),...getChordFromScale(root,scaleKey,true)].find(candidate=>candidate.root===current.root&&candidate.notes.length===current.notes.length&&candidate.notes.every(note=>current.notes.some(item=>getPitchClass(item)===getPitchClass(note)))),[root,scaleKey,current]);
  function choose(nextRoot:string,nextType:ChordQuality){const next=buildChord(nextRoot,nextType);if(next)onChord(next)}
- return <div className="section-view">
+ return <div className="section-view"><button className="context-action practice-launch" onClick={()=>onPractice(current)}>Practicar sobre este acorde</button>
   <section className="card chord-hero"><div><p className="eyebrow">Acorde actual</p><h2>{current.label}</h2><p>{current.qualityLabel} · {current.notes.join(' · ')}</p></div><div className="controls"><label>Fundamental<select value={manualRoot} onChange={e=>{setManualRoot(e.target.value);choose(e.target.value,manualType)}}>{ROOT_OPTIONS.map(note=><option key={note}>{note}</option>)}</select></label><label>Acorde<select value={manualType} onChange={e=>{const type=e.target.value as ChordQuality;setManualType(type);choose(manualRoot,type)}}>{ALL_CHORD_TYPES.map(type=><option key={type.key} value={type.key}>{type.label}</option>)}</select></label></div></section>
   <div className="subnav"><button aria-pressed={view==='analysis'} onClick={()=>onView('analysis')}>Análisis</button><button aria-pressed={view==='voicings'} onClick={()=>onView('voicings')}>Voicings</button></div>
   {view==='analysis'&&<>

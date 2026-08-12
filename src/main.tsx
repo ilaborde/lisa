@@ -5,6 +5,7 @@ import './styles.css';
 import './architecture.css';
 import './composition.css';
 import './learning-context.css';
+import './practice.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

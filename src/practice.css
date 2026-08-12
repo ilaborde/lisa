@@ -1,0 +1,56 @@
+.practice-table label {
+  grid-template-rows: auto 42px 16px;
+  align-content: start;
+}
+
+.practice-table label > select {
+  height: 42px;
+}
+
+.practice-table label > small {
+  min-height: 16px;
+  overflow: hidden;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-controls .controls {
+  align-items: start;
+}
+
+.practice-controls .controls > label {
+  grid-template-rows: auto 42px 18px;
+  align-content: start;
+}
+
+.practice-controls .controls > label > select {
+  height: 42px;
+}
+
+.practice-controls .controls > label > small {
+  min-height: 18px;
+  line-height: 18px;
+}
+
+/* Cada campo usa un ancho acorde a su contenido. */
+.practice-table article {
+  grid-template-columns:
+    minmax(82px, 0.55fr)
+    minmax(112px, 0.8fr)
+    minmax(190px, 1.55fr)
+    minmax(190px, 1.55fr)
+    minmax(82px, 0.55fr);
+}
+
+@media (max-width: 1050px) {
+  .practice-table article {
+    grid-template-columns: minmax(90px, 0.7fr) minmax(160px, 1.3fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .practice-table article {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
