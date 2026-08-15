@@ -2,21 +2,22 @@ import {buildChord,type ChordQuality,type ChordRecord} from './chords';
 import {getPitchClass,normalizePitchClass} from './notes';
 import {getScaleNotes,type ScaleKey} from './scales';
 import {getIntervalBetween} from './intervals';
+import type {ArpeggioExtent} from './arpeggios';
 
 export type PracticeGenre='unspecified'|'blues'|'rock'|'funk'|'soul'|'jazz'|'pop';
-export type PracticeApproach='global'|'follow'|'chord-tones'|'mixed'|'manual';
+export type PracticeApproach='global'|'follow'|'arpeggios'|'chord-tones'|'mixed'|'manual';
 export type PracticeMode='free'|'guided'|'challenge';
 export type Compatibility='Muy compatible'|'Compatible'|'Color'|'Tensión';
 export type PracticeScale={root:string;scaleKey:ScaleKey};
 export type ScaleSuggestion=PracticeScale&{label:string;compatibility:Compatibility;explanation:string};
 export type FretZone={id:string;label:string;from:number;to:number;position:number};
-export type PracticeChordConfig={id:string;chord:ChordRecord;scale:PracticeScale|null;zoneId:string;source:'suggested'|'manual';bars?:number};
+export type PracticeChordConfig={id:string;chord:ChordRecord;scale:PracticeScale|null;zoneId:string;source:'suggested'|'manual';bars?:number;arpeggioExtent?:ArpeggioExtent};
 export type CountInBars=0|1|2;
-export type PracticeSession={name?:string;mode:PracticeMode;genre:PracticeGenre;approach:PracticeApproach;activeChordIndex:number;keepNearby:boolean;target:'third'|'seventh'|'both'|'all';globalScale:PracticeScale|null;chordConfigs:PracticeChordConfig[];bpm:number;beatsPerBar:3|4|6;globalBars:number;loop:boolean;countIn:CountInBars;showNextTarget:boolean};
+export type PracticeSession={name?:string;mode:PracticeMode;genre:PracticeGenre;approach:PracticeApproach;activeChordIndex:number;keepNearby:boolean;target:'third'|'seventh'|'both'|'all';globalScale:PracticeScale|null;chordConfigs:PracticeChordConfig[];bpm:number;beatsPerBar:3|4|6;globalBars:number;loop:boolean;countIn:CountInBars;showNextTarget:boolean;arpeggioExtent:ArpeggioExtent;showGuideTones:boolean;labelMode:'notes'|'degrees'};
 export type PracticeNoteAnalysis={note:string;scaleRelation:{belongs:boolean;degree:string|null;description:string|null};chordRelation:{belongs:boolean;degree:string|null;role:string|null;description:string|null};importance:'strong-target'|'chord-tone'|'scale-tone'|'contextual'};
 
 export const PRACTICE_GENRES:[PracticeGenre,string][]=[['unspecified','Sin especificar'],['blues','Blues'],['rock','Rock'],['funk','Funk'],['soul','Soul / R&B'],['jazz','Jazz'],['pop','Pop']];
-export const PRACTICE_APPROACHES:[PracticeApproach,string][]=[['global','Una escala global'],['follow','Seguir los acordes'],['chord-tones','Chord tones'],['mixed','Mixto'],['manual','Manual']];
+export const PRACTICE_APPROACHES:[PracticeApproach,string][]=[['global','Una escala global'],['follow','Seguir los acordes'],['arpeggios','Arpegios'],['chord-tones','Chord tones'],['mixed','Mixto'],['manual','Manual']];
 export const FRET_ZONES:FretZone[]=[
  {id:'low',label:'Zona baja · trastes 0–5',from:0,to:5,position:1},
  {id:'mid-low',label:'Zona media-baja · trastes 4–9',from:4,to:9,position:2},
@@ -47,7 +48,7 @@ export function getChordTones(chord:ChordRecord){return [...chord.notes]}
 export function getTargetNotes(chord:ChordRecord,target:PracticeSession['target']){const indexes=target==='third'?[1]:target==='seventh'?[3]:target==='both'?[1,3]:chord.notes.map((_,i)=>i);return indexes.filter(i=>i<chord.notes.length).map(i=>chord.notes[i])}
 export function noteInScale(note:string,scale:PracticeScale){const pitch=getPitchClass(note);return pitch!==null&&getScaleNotes(scale.root,scale.scaleKey).some(n=>getPitchClass(n)===pitch)}
 export function nearestZone(currentId:string,available=FRET_ZONES){const current=FRET_ZONES.find(z=>z.id===currentId)??FRET_ZONES[0],center=(current.from+current.to)/2;return [...available].sort((a,b)=>Math.abs((a.from+a.to)/2-center)-Math.abs((b.from+b.to)/2-center))[0]}
-export function parseChordLabel(label:string){const match=label.trim().match(/^([A-Ga-g](?:#|b)?)(maj7|m7b5|dim7|dim|aug|sus2|sus4|m7|m|7|9|11|13)?$/);if(!match)return null;const map:Record<string,ChordQuality>={'':'major',m:'minor','7':'dominant7',maj7:'major7',m7:'minor7',m7b5:'halfDiminished7',dim:'diminished',dim7:'diminished7',aug:'augmented',sus2:'sus2',sus4:'sus4','9':'dominant9','11':'dominant11','13':'dominant13'};return buildChord(match[1][0].toUpperCase()+match[1].slice(1),map[match[2]??''])}
+export function parseChordLabel(label:string){const match=label.trim().match(/^([A-Ga-g](?:#|b)?)(maj9|m9|maj7|m7b5|dim7|dim|aug|sus2|sus4|m7|m6|m|6|7|9|11|13)?$/);if(!match)return null;const map:Record<string,ChordQuality>={'':'major',m:'minor','6':'major6',m6:'minor6','7':'dominant7',maj7:'major7',m7:'minor7',m7b5:'halfDiminished7',dim:'diminished',dim7:'diminished7',aug:'augmented',sus2:'sus2',sus4:'sus4','9':'dominant9',maj9:'major9',m9:'minor9','11':'dominant11','13':'dominant13'};return buildChord(match[1][0].toUpperCase()+match[1].slice(1),map[match[2]??''])}
 export function pitchEquals(a:string,b:string){const pa=getPitchClass(a),pb=getPitchClass(b);return pa!==null&&pb!==null&&normalizePitchClass(pa)===normalizePitchClass(pb)}
 const ROLE:Record<string,string>={'1':'fundamental','b2':'segunda menor','2':'segunda mayor','b3':'tercera menor','3':'tercera mayor','4':'cuarta justa','b5 / #4':'quinta disminuida / cuarta aumentada','5':'quinta justa','b6':'sexta menor','6':'sexta mayor','b7':'séptima menor','7':'séptima mayor'};
 export function analyzePracticeNote({note,baseScale,chord}:{note:string;baseScale:PracticeScale;chord:ChordRecord}):PracticeNoteAnalysis{

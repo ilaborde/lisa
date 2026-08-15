@@ -7,7 +7,7 @@ import {HarmonyTable} from '../components/HarmonyTable';
 import {ModeComparer} from '../components/ModeComparer';
 import {ContextAction} from '../components/layout/ContextAction';
 
-export function ExploreSection({instrument,root,scaleKey,selectedChord,onRoot,onScale,onChord,onOpenChord,onPracticeScale}:{instrument:Instrument;root:string;scaleKey:ScaleKey;selectedChord:ChordRecord|null;onRoot:(v:string)=>void;onScale:(v:ScaleKey)=>void;onChord:(v:ChordRecord)=>void;onOpenChord:(chord:ChordRecord,view:'analysis'|'voicings')=>void;onPracticeScale:()=>void}){
+export function ExploreSection({instrument,root,scaleKey,selectedChord,onRoot,onScale,onChord,onOpenChord,onPracticeScale}:{instrument:Instrument;root:string;scaleKey:ScaleKey;selectedChord:ChordRecord|null;onRoot:(v:string)=>void;onScale:(v:ScaleKey)=>void;onChord:(v:ChordRecord)=>void;onOpenChord:(chord:ChordRecord,view:'analysis'|'arpeggios'|'voicings')=>void;onPracticeScale:()=>void}){
  const[tetrads,setTetrads]=useState(false),[labels,setLabels]=useState<'notes'|'degrees'|'both'>('both');
  const harmony=useMemo(()=>getChordFromScale(root,scaleKey,tetrads),[root,scaleKey,tetrads]),scale=getScaleByKey(scaleKey),surface=instrument==='guitar'?'mástil':'teclado';
  return <div className="section-view"><button className="context-action practice-launch" onClick={onPracticeScale}>Practicar esta escala</button>

@@ -1,5 +1,7 @@
 export type LessonGuidance={goal:string;connection:string;application:string};
 export const LESSON_GUIDANCE:Record<string,LessonGuidance>={
+ 'arpeggio-intro':{goal:'Distinguir acorde y arpegio.',application:'Construir una triada como línea melódica.',connection:'Las notas vienen del mismo motor de acordes.'},
+ 'seventh-arpeggios':{goal:'Agregar la séptima al recorrido.',application:'Practicar guide tones sobre cambios.',connection:'La 3ª y la 7ª revelan la cualidad del acorde.'},
  'twelve-notes':{goal:'Reconocer el ciclo de doce alturas que usa toda la música occidental.',connection:'Es el mapa base: escalas, acordes e intervalos son selecciones y distancias dentro de este ciclo.',application:'Te permite encontrar una nota aunque cambie de octava o instrumento.'},
  tones:{goal:'Medir distancias pequeñas en semitonos y tonos.',connection:'Ahora que conocés las notas, empezás a medir el espacio que hay entre ellas.',application:'Es la unidad con la que se construyen escalas, intervalos y acordes.'},
  'fretboard-notes':{goal:'Trasladar el ciclo cromático al mástil.',connection:'Cada traste avanza exactamente un semitono; por eso una misma nota reaparece en distintas cuerdas.',application:'Ubicar notas objetivo sin depender solamente de dibujos o patrones.'},

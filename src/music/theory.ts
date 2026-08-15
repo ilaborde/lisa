@@ -10,6 +10,7 @@ export * from './progressions';
 export * from './composition';
 export * from './styleProgressions';
 export * from './practiceSuggestions';
+export * from './arpeggios';
 export * from './compositionVariations';
 
 import { getIntervalBetween } from './intervals';

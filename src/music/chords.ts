@@ -3,18 +3,22 @@ import { getIntervalInfo } from './intervals';
 import { getScaleByKey, getScaleDegreeNames, getScaleNotes, type ScaleKey } from './scales';
 
 export type TriadQuality = 'major' | 'minor' | 'diminished' | 'augmented' | 'sus2' | 'sus4';
-export type SeventhChordQuality = 'dominant7' | 'major7' | 'minor7' | 'halfDiminished7' | 'diminished7' | 'dominant9' | 'dominant11' | 'dominant13';
+export type SeventhChordQuality = 'dominant7' | 'major7' | 'minor7' | 'halfDiminished7' | 'diminished7' | 'major6' | 'minor6' | 'dominant9' | 'major9' | 'minor9' | 'dominant11' | 'dominant13';
 export type ChordQuality = TriadQuality | SeventhChordQuality;
 
 export type ChordTypeRecord = { key: ChordQuality; label: string; suffix: string; formula: readonly number[]; degrees: readonly number[]; degreeLabels?:readonly string[];voicingFormula?:readonly number[] };
 export const ALL_CHORD_TYPES: readonly ChordTypeRecord[] = [
-  { key:'major', label:'Mayor', suffix:'', formula:[0,4,7], degrees:[1,3,5] }, { key:'minor', label:'Menor', suffix:'m', formula:[0,3,7], degrees:[1,3,5] },
-  { key:'diminished', label:'Disminuido', suffix:'dim', formula:[0,3,6], degrees:[1,3,5] }, { key:'augmented', label:'Aumentado', suffix:'aug', formula:[0,4,8], degrees:[1,3,5] },
+  { key:'major', label:'Mayor', suffix:'', formula:[0,4,7], degrees:[1,3,5], degreeLabels:['1','3','5'] }, { key:'minor', label:'Menor', suffix:'m', formula:[0,3,7], degrees:[1,3,5], degreeLabels:['1','b3','5'] },
+  { key:'diminished', label:'Disminuido', suffix:'dim', formula:[0,3,6], degrees:[1,3,5], degreeLabels:['1','b3','b5'] }, { key:'augmented', label:'Aumentado', suffix:'aug', formula:[0,4,8], degrees:[1,3,5], degreeLabels:['1','3','#5'] },
   { key:'sus2', label:'Sus2', suffix:'sus2', formula:[0,2,7], degrees:[1,2,5] }, { key:'sus4', label:'Sus4', suffix:'sus4', formula:[0,5,7], degrees:[1,4,5] },
-  { key:'dominant7', label:'7', suffix:'7', formula:[0,4,7,10], degrees:[1,3,5,7] }, { key:'major7', label:'Maj7', suffix:'maj7', formula:[0,4,7,11], degrees:[1,3,5,7] },
-  { key:'minor7', label:'m7', suffix:'m7', formula:[0,3,7,10], degrees:[1,3,5,7] }, { key:'halfDiminished7', label:'m7b5', suffix:'m7b5', formula:[0,3,6,10], degrees:[1,3,5,7] },
-  { key:'diminished7', label:'dim7', suffix:'dim7', formula:[0,3,6,9], degrees:[1,3,5,7] },
+  { key:'dominant7', label:'7', suffix:'7', formula:[0,4,7,10], degrees:[1,3,5,7], degreeLabels:['1','3','5','b7'] }, { key:'major7', label:'Maj7', suffix:'maj7', formula:[0,4,7,11], degrees:[1,3,5,7], degreeLabels:['1','3','5','7'] },
+  { key:'minor7', label:'m7', suffix:'m7', formula:[0,3,7,10], degrees:[1,3,5,7], degreeLabels:['1','b3','5','b7'] }, { key:'halfDiminished7', label:'m7b5', suffix:'m7b5', formula:[0,3,6,10], degrees:[1,3,5,7], degreeLabels:['1','b3','b5','b7'] },
+  { key:'diminished7', label:'dim7', suffix:'dim7', formula:[0,3,6,9], degrees:[1,3,5,7], degreeLabels:['1','b3','b5','bb7'] },
+  { key:'major6', label:'6', suffix:'6', formula:[0,4,7,9], degrees:[1,3,5,6], degreeLabels:['1','3','5','6'] },
+  { key:'minor6', label:'m6', suffix:'m6', formula:[0,3,7,9], degrees:[1,3,5,6], degreeLabels:['1','b3','5','6'] },
   { key:'dominant9', label:'9', suffix:'9', formula:[0,4,7,10,14], degrees:[1,3,5,7,9], degreeLabels:['1','3','5','b7','9'],voicingFormula:[0,4,10,14] },
+  { key:'major9', label:'Maj9', suffix:'maj9', formula:[0,4,7,11,14], degrees:[1,3,5,7,9], degreeLabels:['1','3','5','7','9'],voicingFormula:[0,4,11,14] },
+  { key:'minor9', label:'m9', suffix:'m9', formula:[0,3,7,10,14], degrees:[1,3,5,7,9], degreeLabels:['1','b3','5','b7','9'],voicingFormula:[0,3,10,14] },
   { key:'dominant11', label:'11', suffix:'11', formula:[0,4,7,10,14,17], degrees:[1,3,5,7,9,11], degreeLabels:['1','3','5','b7','9','11'],voicingFormula:[0,4,10,14,17] },
   { key:'dominant13', label:'13', suffix:'13', formula:[0,4,7,10,14,17,21], degrees:[1,3,5,7,9,11,13], degreeLabels:['1','3','5','b7','9','11','13'],voicingFormula:[0,4,10,14,17,21] },
 ];
